@@ -1,5 +1,6 @@
 package cn.pepedd.hpoj.judge;
 
+import cn.pepedd.hpoj.judge.rabbitmq.InitRabbitMq;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients(basePackages = {"cn.pepedd.hpoj.client.service"})
 public class JudgeServiceApplication {
   public static void main(String[] args) {
+    InitRabbitMq.doInit();
     SpringApplication.run(JudgeServiceApplication.class, args);
   }
 }

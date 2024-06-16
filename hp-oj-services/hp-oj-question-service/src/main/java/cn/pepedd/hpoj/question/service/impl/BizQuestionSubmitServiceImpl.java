@@ -10,6 +10,7 @@ import cn.pepedd.hpoj.entity.pojo.questionSubmit.BizQuestionSubmit;
 import cn.pepedd.hpoj.entity.pojo.questionSubmit.QuestionSubmit;
 import cn.pepedd.hpoj.entity.vo.QuestionSubmitVO;
 import cn.pepedd.hpoj.question.mapper.BizQuestionSubmitMapper;
+import cn.pepedd.hpoj.question.rabbitmq.MyMessageProducer;
 import cn.pepedd.hpoj.question.service.IBizQuestionService;
 import cn.pepedd.hpoj.question.service.IBizQuestionSubmitService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author pepedd864
@@ -37,6 +37,9 @@ public class BizQuestionSubmitServiceImpl extends ServiceImpl<BizQuestionSubmitM
   @Resource
   @Lazy
   private JudgeFeignClient judgeFeignClient;
+
+  @Resource
+  private MyMessageProducer myMessageProducer;
 
   /**
    * 提交题目
@@ -58,10 +61,12 @@ public class BizQuestionSubmitServiceImpl extends ServiceImpl<BizQuestionSubmitM
     bizQuestionSubmit.setUserId(Long.valueOf((String) loginId));
     // 插入
     save(bizQuestionSubmit);
-    // 执行判题服务 TODO
-    CompletableFuture.runAsync(() -> {
-      judgeFeignClient.doJudge(bizQuestionSubmit.getId());
-    });
+    // 改造成消息队列
+    myMessageProducer.sendMessage("code_queue", "my_routingKey", bizQuestionSubmit.getId().toString());
+//    // 执行判题服务 TODO
+//    CompletableFuture.runAsync(() -> {
+//      judgeFeignClient.doJudge(bizQuestionSubmit.getId());
+//    });
     return true;
   }
 

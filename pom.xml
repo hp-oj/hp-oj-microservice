@@ -163,6 +163,12 @@
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
+            <!--消息队列-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
             <!-- Sa-Token 权限认证, 在线文档：https://sa-token.cc -->
             <dependency>
                 <groupId>cn.dev33</groupId>
